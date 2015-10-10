@@ -113,7 +113,9 @@ class MarkdowntocInsert(sublime_plugin.TextCommand):
                 toc_close = self.get_toc_close_tag(toc_start.end())
 
                 if toc_close:
-                    toc = self.get_toc(dic, toc_close.end(), edit)
+                    import datetime
+                    toc = 'update time:' + (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M") + '\n\n'
+                    toc += self.get_toc(dic, toc_close.end(), edit)
                     tocRegion = sublime.Region(
                         toc_start.end(), toc_close.begin())
                     if toc:
@@ -172,6 +174,8 @@ class MarkdowntocInsert(sublime_plugin.TextCommand):
         toc = ''
         _ids = []
         level_counters = [0]
+        idn = 1
+        _iddict = {}
 
         for item in items:
             _id = None
@@ -207,6 +211,26 @@ class MarkdowntocInsert(sublime_plugin.TextCommand):
                 n = _ids.count(_id)
                 if 1 < n:
                     _id += '-' + str(n-1)
+
+            matchs = re.findall(u'[a-zA-Z0-9 ]+',item[1].rstrip().lstrip())
+            if len(matchs)!=0:
+                # use char when there are chars ,and add"_num" if same chars
+                ms = ''
+                for match in matchs:
+                    ms += match
+                _id = ms.lower()
+                if _id in _iddict:
+                    _iddict[_id] = _iddict[_id]+1
+                    _id = _id + '_' + str(_iddict[_id])
+                else:
+                    _iddict.setdefault(_id,0)
+            else:
+                # use "_num" when there are not chars,such as chinese word
+                _id= '_'+str(idn)
+                idn += 1
+
+            # use '-' replace space
+            _id = _id.rstrip().lstrip().replace('  ','-').replace(' ', '-')
 
             if attrs['style'] == 'unordered':
                 list_prefix = '- '
