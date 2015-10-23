@@ -212,7 +212,7 @@ class MarkdowntocInsert(sublime_plugin.TextCommand):
                 if 1 < n:
                     _id += '-' + str(n-1)
 
-            matchs = re.findall(u'[a-zA-Z0-9 ]+',item[1].rstrip().lstrip())
+            matchs = re.findall(u'[a-zA-Z0-9]+',item[1].rstrip().lstrip())
             if len(matchs)!=0:
                 # use char when there are chars ,and add"_num" if same chars
                 ms = ''
@@ -230,7 +230,8 @@ class MarkdowntocInsert(sublime_plugin.TextCommand):
                 idn += 1
 
             # use '-' replace space
-            _id = _id.rstrip().lstrip().replace('  ','-').replace(' ', '-')
+            #_id = _id.rstrip().lstrip().replace('  ','-').replace(' ', '-')
+            #_id = _id.rstrip().lstrip().trim()
 
             if attrs['style'] == 'unordered':
                 list_prefix = '- '
